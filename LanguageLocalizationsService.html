@@ -7,25 +7,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script>
-      $(document).ready(function() {
-        $("#submit").click(function() {
-          let variableNames = $("#uiString").val();
-          let engLocalizedValue = $("#engText").val();
-          let thLocalizedValue = $("#thText").val();
-          let uiStringOutput = "  static String get " + variableNames + " => LanguageLocalizations.getText('" + variableNames + "');";
-          let engLocalizedValuesOutput = "'" + variableNames + "': '" + engLocalizedValue + "',";
-          let engLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + engLocalizedValue + "');";
-          let thLocalizedValuesOutput = "'" + variableNames + "': '" + thLocalizedValue + "',";
-          let thLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + thLocalizedValue + "');";
-          $("textarea#uiStringOutput").val(uiStringOutput);
-          $("textarea#engLocalizedValuesOutput").val(engLocalizedValuesOutput);
-          $("textarea#engLocalizedValuesTestOutput").val(engLocalizedValuesTestOutput);
-          $("textarea#thLocalizedValuesOutput").val(thLocalizedValuesOutput);
-          $("textarea#thLocalizedValuesTestOutput").val(thLocalizedValuesTestOutput);
-        });
-      });
-    </script>
+    <script type="text/javascript" src="./assets/js/script.js"></script>
+
   </head>
   <body style="background-color:black;">
     <div class="jumbotron text-center" style="background-color:black;">
