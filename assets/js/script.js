@@ -1,4 +1,6 @@
 $(document).ready(function() {
+
+    // generate output strings
     $("#submit").click(function() {
       let variableNames = $("#uiString").val();
       let engLocalizedValue = $("#engText").val();
@@ -13,5 +15,15 @@ $(document).ready(function() {
       $("textarea#engLocalizedValuesTestOutput").val(engLocalizedValuesTestOutput);
       $("textarea#thLocalizedValuesOutput").val(thLocalizedValuesOutput);
       $("textarea#thLocalizedValuesTestOutput").val(thLocalizedValuesTestOutput);
+    });
+
+    // clear all fields
+    $("#clear").click(function(){
+        $('input[type=text]').each(function() {
+            $(this).val('');
+        });
+        $('textarea').each(function() {
+            $(this).val('');
+        });
     });
   });
