@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head style="background-color:black;">
+    <title>Generate flutter localization services v1</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("#submit").click(function() {
+          let variableNames = $("#uiString").val();
+          let engLocalizedValue = $("#engText").val();
+          let thLocalizedValue = $("#thText").val();
+          let uiStringOutput = "  static String get " + variableNames + " => LanguageLocalizations.getText('" + variableNames + "');";
+          let engLocalizedValuesOutput = "'" + variableNames + "': '" + engLocalizedValue + "',";
+          let engLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + engLocalizedValue + "');";
+          let thLocalizedValuesOutput = "'" + variableNames + "': '" + thLocalizedValue + "',";
+          let thLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + thLocalizedValue + "');";
+          $("textarea#uiStringOutput").val(uiStringOutput);
+          $("textarea#engLocalizedValuesOutput").val(engLocalizedValuesOutput);
+          $("textarea#engLocalizedValuesTestOutput").val(engLocalizedValuesTestOutput);
+          $("textarea#thLocalizedValuesOutput").val(thLocalizedValuesOutput);
+          $("textarea#thLocalizedValuesTestOutput").val(thLocalizedValuesTestOutput);
+        });
+      });
+    </script>
+  </head>
+  <body style="background-color:black;">
+    <div class="jumbotron text-center" style="background-color:black;">
+      <h1 style="color: green;">localization services</h1>
+    </div>
+    <div class="container">
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-sm-4">
+          <label for="uiString" style="color:green">input ui string variable name</label>
+          <input type="text" class="form-control" id="uiString" placeholder="input ui string" style="background-color: black;">
+        </div>
+        <div class="col-sm-4">
+          <label for="engText" style="color:green">input eng string</label>
+          <input type="text" class="form-control" id="engText" placeholder="input eng string" style="background-color: black;">
+        </div>
+        <div class="col-sm-4">
+          <label for="thText" style="color:green">input th string</label>
+          <input type="text" class="form-control" id="thText" placeholder="input th string" style="background-color: black;">
+        </div>
+      </div>
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-4">
+              <button type="button" id="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+              <button type="button" id="clear" class="btn btn-danger" style="float: right;">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-md-12">
+          <label for="uiStringOutput" style="color:green">UiString output</label>
+          <textarea class="form-control" id="uiStringOutput" rows="3" style="background-color: black;"></textarea>
+        </div>
+      </div>
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-md-12">
+          <label for="engLocalizedValuesOutput" style="color:green">eng localized values output</label>
+          <textarea class="form-control" id="engLocalizedValuesOutput" rows="3" style="background-color: black;"></textarea>
+        </div>
+      </div>
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-md-12">
+          <label for="engLocalizedValuesTestOutput" style="color:green">eng localized values test output</label>
+          <textarea class="form-control" id="engLocalizedValuesTestOutput" rows="3" style="background-color: black;"></textarea>
+        </div>
+      </div>
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-md-12">
+          <label for="thLocalizedValuesOutput" style="color:green">th localized values output</label>
+          <textarea class="form-control" id="thLocalizedValuesOutput" rows="3" style="background-color: black;"></textarea>
+        </div>
+      </div>
+      <div class="row" style="padding-block: 8px;">
+        <div class="col-md-12">
+          <label for="thLocalizedValuesTestOutput" style="color:green">th localized values test output</label>
+          <textarea class="form-control" id="thLocalizedValuesTestOutput" rows="3" style="background-color: black;"></textarea>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
