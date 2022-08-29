@@ -7,9 +7,9 @@ $(document).ready(function() {
       let thLocalizedValue = $("#thText").val();
       let uiStringOutput = "  static String get " + variableNames + " => LanguageLocalizations.getText('" + variableNames + "');";
       let engLocalizedValuesOutput = "'" + variableNames + "': '" + engLocalizedValue + "',";
-      let engLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + engLocalizedValue + "');";
+      let engLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + engLocalizedValue + "',);";
       let thLocalizedValuesOutput = "'" + variableNames + "': '" + thLocalizedValue + "',";
-      let thLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + thLocalizedValue + "');";
+      let thLocalizedValuesTestOutput = "expect(LanguageLocalizations.getText('" + variableNames + "'), '" + thLocalizedValue + "',);";
       $("textarea#uiStringOutput").val(uiStringOutput);
       $("textarea#engLocalizedValuesOutput").val(engLocalizedValuesOutput);
       $("textarea#engLocalizedValuesTestOutput").val(engLocalizedValuesTestOutput);
