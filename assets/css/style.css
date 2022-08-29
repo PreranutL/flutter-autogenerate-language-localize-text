@@ -1,0 +1,33 @@
+head {
+	background-color: black;
+}
+
+legend {
+	all: unset;
+}
+
+div.jumbotron.text-center {
+	color: yellow;
+}
+
+div.jumbotron.text-center {
+	background-color: black;
+}
+
+div.container {
+	background-color: black;
+}
+
+label {
+	color: yellow;
+}
+
+input.form-control {
+	color: yellow;
+	background-color: black;
+}
+
+textarea.form-control {
+	color: yellow;
+	background-color: black;
+}
