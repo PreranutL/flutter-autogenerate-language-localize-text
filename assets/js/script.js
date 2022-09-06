@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+    var import_data = {};
     // export localize value sheets from json
     $("#export_localize_value_xlsx").click(function(){
         create_excel();
@@ -23,6 +23,32 @@ $(document).ready(function() {
         $("textarea#thLocalizedValuesTestOutput").val(thLocalizedValuesTestOutput);
     });
 
+
+    function setData(data) {
+        import_data = $.parseJSON(data);
+    }
+
+    // import excel
+    $('#import_data').change(function(e) {
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(e.target.files[0]);
+        reader.onload = function(e) {
+            var import_data = e.target.result;
+            var workbook = XLSX.read(import_data, {
+                type: 'binary'
+            });
+
+            workbook.SheetNames.forEach(function(sheetName) {
+                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                var json_object = JSON.stringify(XL_row_object);
+                console.log(json_object);
+                setData(json_object);
+            });
+        };
+
+    });
+
+
     // clear all fields
     $("#clear").click(function() {
         $('input[type=text]').each(function() {
@@ -33,13 +59,61 @@ $(document).ready(function() {
         });
     });
 
+
+        
+        $("#import_data_submit").click(function() {
+            generate_localize_value()
+        });
+
     // localize_value.dart
     let localizeValueHeader = "/// Localized value for display with specific language \nclass LocalizedText {\n/// Map of localize and map of ui string key and string value \nstatic const localizedValues = <String, Map<String, String>>{ \n";
-    let localizeValueEnd = "},\n};\n}";
+    let localizeValueEnd = "};\n}";
     // ui_strings.dart
-
+    let uiStringsHeader = "// ignore_for_file: public_member_api_docs \n";    
+    let uiStringsImport = "import 'package:common_components/services/localization_service.dart'; \nimport 'package:tuple/tuple.dart';\n";
+    let uiStringsClassComments = "/// This is ui strings class for display in application \n/// every field use prefix 'common'\n";
+    let uiStringsClass ="class UiStrings { \n";
+    let missingString = "/// This is the string to show when there is no string found\n/// in localized values.\n/// This string should NOT be translated.static String get commonStringNotFound => 'missing string';\n";
     // localize_value_test.dart
 
+
+
+    function generate_localize_value()
+    {
+        let localize_value = '';
+        let en_value = "'en': {\n";
+        let th_value = "'th': {\n";
+        let ui_strings = '';
+        let ui_strings_value = '';
+        for(const key in import_data)
+        {
+            ui_strings_value =ui_strings_value+ "  static String get " + import_data[key]['variable_name'] + " => LanguageLocalizations.getText('" + import_data[key]['variable_name'] + "');\n";
+            en_value = en_value+`'${import_data[key]['variable_name']}':'${import_data[key]['en']}',\n`;
+            th_value = th_value+`'${import_data[key]['variable_name']}':'${import_data[key]['thai']}',\n`;
+        }
+        ui_strings = uiStringsHeader+uiStringsImport+uiStringsClassComments+uiStringsClass+missingString+ui_strings_value+"}\n"
+        localize_value = localizeValueHeader +en_value+ "},\n"+th_value+ "},\n"+localizeValueEnd;
+
+        console.log(ui_strings);
+        downloadString(ui_strings, "text/dart", "ui_strings.dart");
+        downloadString(localize_value, "text/dart", "localized_values.dart")
+
+    }
+
+    // create file and download
+    function downloadString(text, fileType, fileName) {
+        var blob = new Blob([text], { type: fileType });
+      
+        var a = document.createElement('a');
+        a.download = fileName;
+        a.href = URL.createObjectURL(blob);
+        a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+      }
 
     // creates excel file from localize value json
     function create_excel()
@@ -53,9 +127,7 @@ $(document).ready(function() {
     console.log(inputData);
     let output = [];
     let cellValue ={};
-    for (const key in inputData) {
-        console.log(`${key}\n`);
-        for (const innerKey in inputData[key]) {
+        for (const innerKey in inputData['en']) {
                  cellValue = {
                     "variable_name": innerKey,
                     "thai": inputData['th'][innerKey],
@@ -65,9 +137,7 @@ $(document).ready(function() {
             console.log(cellValue);
             output.push(cellValue);
         }
-
-
-    }
+    
     console.log(output);
     console.log(typeof(output)); 
     export_excel(output);
@@ -95,4 +165,3 @@ $(document).ready(function() {
 
 });
 
-// common {"en":{"commonTitle":"EN","commonAppTitle":"This is in English Language.","commonAppContent":"Common Components (EN)","commonSignIn":"Sign in","commonRegistration":"registration","commonLogin":"login","commonPassword":"password","commonReConfirmPassword":"confirm password","commonPasswordFormat":"*********","commonPhoneNumber":"phone number","commonPhoneNumberHintText":"xxx-xxx-xxxx","commonForgotPassword":"forgot password","commonSms":"SMS","commonDone":"done","commonReportProblem":"have problem ","commonContactUs":"contact us","commonTermsAndConditions":"terms and conditions","commonConfirm":"confirm","commonAgreeToTermOfService":"I am agree to terms of condition and acknowledge to ","commonPrivacyAndPolicy":"privacy and policy","commonPersonalInformation":"personal information","commonMedicalRecords":"medical records","commonRequestOtp":"Request OTP","commonAlreadyHasAnAccount":"Have an account?","commonName":"Name Surname","commonNameHintText":"name","commonGender":"gender","commonAge":"age","commonEmail":"email","commonEmailFormat":"xxxxxx@gmail.com","commonNext":"next","commonWeight":"weight","commonHeight":"height","commonKilograms":"kg","commonCentimeters":"cm","commonAccept":"accept","commonNationality":"nationality","commonThai":"Thai","commonUSA":"American","commonTaiwanese":"Taiwanese","commonCongenitalDisease":"congenital disease","commonDiabetes":"Diabetes","commonCVD":"Cardio Vascular Disease","commonHTN":"Hypertension","commonFemale":"female","commonMale":"male","commonAllergen":"allergen","commonPeanuts":"Peanuts","commonDust":"Dust","commonLactose":"Lactose","commonCrustacean":"Crustacean","commonYourHealthInfo":"Personal Health Information","commonBirthDate":"Birthdate","commonAgeString":"{{age}} years old","commonNoCongenitalDisease":"No congenital disease","commonNotDiagnose":"No diagnostic data","commonDot":".","commonDegreeCelsius":"°C","commonEditProfile":"Edit Profile","commonSave":"Save","commonNamePrefix":"name prefix","commonMister":"Mr.","commonMrs":"Mrs.","commonMiss":"Miss","commonFirstname":"first name","commonLastName":"last name","commonInsurance":"insurance","commonEdit":"edit","commonDelete":"delete","commonCancel":"cancel","commonBank":"Bank Name","commonKBank":"Kasikorn Thai","commonSCB":"SCB","commonBBL":"Bangkok Bank","commonBankAccountNumber":"Bank account No.","commonBankAccountName":"Bank account name","commonAIA":"AIA","commonAXA":"Krungthai AXA","commonFWD":"FWD","commonAllianz":"Allianz","tabletMedicine":"tablet","liquidMedicine":"liquid","capsuleMedicine":"capsule","commonMilligram":"milligram","commonMilliliter":"milliliter","commonNameOnCard":"Name on card","commonCardNumber":"Card number","commonExpirationDate":"Expiry date","commonDownload":"Download","commonPrescription":"Prescription","commonOrder":"Order","commonDefaultMethod":"Default","commonAllergicReactions":"allergic reactions"},"th":{"commonTitle":"TH","commonAppTitle":"This is in Thai Language.","commonAppContent":"Common Components (TH)","commonSignIn":"เข้าสู่ระบบ","commonRegistration":"ลงทะเบียน","commonLogin":"เข้าสู่ระบบ","commonPassword":"รหัสผ่าน","commonReConfirmPassword":"ยืนยันรหัสผ่าน","commonPasswordFormat":"*********","commonPhoneNumber":"โทรศัพท์","commonPhoneNumberHintText":"xxx-xxx-xxxx","commonForgotPassword":"ลืมรหัสผ่าน","commonSms":"รหัส SMS 4 หลัก","commonDone":"เสร็จสิ้น","commonReportProblem":"มีปัญหาการใช้งาน","commonContactUs":" ติดต่อเรา","commonTermsAndConditions":"ข้อกำหนดการใช้บริการ","commonConfirm":"ยืนยัน","commonAgreeToTermOfService":"ข้าพเจ้ายอมรับข้อกำหนดการใช้บริการ และ รับทราบถึง","commonPrivacyAndPolicy":"นโยบายความเป็นส่วนตัว","commonPersonalInformation":"ข้อมูลส่วนบุคคล","commonMedicalRecords":"ข้อมูลสุขภาพ","commonRequestOtp":"ขอรหัส OTP","commonAlreadyHasAnAccount":"มีบัญชีผู้ใช้อยู่แล้ว","commonName":"ชื่อ นามสกุล","commonNameHintText":"ชื่อ","commonGender":"เพศโดยกำเนิด","commonAge":"อายุ","commonEmail":"อีเมล","commonEmailFormat":"xxxxxx@gmail.com","commonNext":"ถัดไป","commonWeight":"น้ำหนัก","commonHeight":"ส่วนสูง","commonKilograms":"กก.","commonCentimeters":"ซม.","commonAccept":"ตกลง","commonNationality":"สัญชาติ","commonThai":"ไทย","commonUSA":"อเมริกา","commonTaiwanese":"ไต้หวัน","commonCongenitalDisease":"โรคประจำตัว","commonDiabetes":"โรคเบาหวาน","commonCVD":"โรคหัวใจ","commonHTN":"โรคความดันโลหิตสูง","commonFemale":"หญิง","commonMale":"ชาย","commonAllergen":"สารก่อภูมิแพ้","commonPeanuts":"ถั่ว","commonDust":"ฝุ่น","commonLactose":"น้ำตาลแลกโทส","commonCrustacean":"สัตว์น้ำมีเปลือก","commonYourHealthInfo":"ข้อมูลสุขภาพของท่าน","commonBirthDate":"วัน เดือน ปี เกิด","commonAgeString":"{{age}} ปี","commonNoCongenitalDisease":"ไม่มีโรคประจำตัว","commonNotDiagnose":"ยังไม่วิเคราะห์อาการ","commonDot":".","commonDegreeCelsius":"°C","commonEditProfile":"แก้ไขโปรไฟล์","commonSave":"บันทึก","commonNamePrefix":"คำนำหน้าชื่อ","commonMister":"นาย","commonMrs":"นาง","commonMiss":"นางสาว","commonFirstname":"ชื่อ","commonLastName":"นามสกุล","commonInsurance":"ประกัน","commonEdit":"แก้ไข","commonDelete":"ลบ","commonCancel":"ยกเลิก","commonBank":"ธนาคาร","commonKBank":"ธนาคารกสิกรไทย","commonSCB":"ธนาคารไทยพาณิชย์","commonBBL":"ธนาคารกรุงเทพ","commonBankAccountNumber":"หมายเลขบัญชี","commonBankAccountName":"ชื่อบัญชี","commonAIA":"AIA","commonAXA":"Krungthai AXA","commonFWD":"FWD","commonAllianz":"Allianz","tabletMedicine":"ชนิดเม็ด","liquidMedicine":"ชนิดน้ำ","capsuleMedicine":"ชนิดแคปซูล","commonMilligram":"มิลลิกรัม","commonMilliliter":"มิลลิลิตร","commonNameOnCard":"ชื่อบนบัตร","commonCardNumber":"เลขบัตร","commonExpirationDate":"วันหมดอายุ","commonDownload":"ดาวน์โหลด","commonPrescription":"ใบสั่งยา","commonOrder":"สั่งซื้อ","commonDefaultMethod":"ค่าเริ่มต้น","commonAllergicReactions":"อาการแพ้"}}
