@@ -75,7 +75,8 @@ $(document).ready(function() {
     let uiStringsClass ="class UiStrings { \n";
     let missingString = "/// This is the string to show when there is no string found\n/// in localized values.\n/// This string should NOT be translated.static String get commonStringNotFound => 'missing string';\n";
     // localize_value_test.dart
-
+    let localizeValueTestHeader = "import 'package:common_components/services/localization_service.dart';\nimport 'package:flutter/material.dart';\nimport 'package:flutter_test/flutter_test.dart';\n";
+    let localizeValueTestMain = "void main() {\n";
 
 
     function generate_localize_value()
@@ -85,19 +86,24 @@ $(document).ready(function() {
         let th_value = "'th': {\n";
         let ui_strings = '';
         let ui_strings_value = '';
+        let localize_value_test = '';
+        let th_localize_value_test = "  test('should output Thai text', () {\nLanguageLocalizations.setInstance(\nLanguageLocalizations(Locale('th', 'TH')),\n);\n";
+        let en_localize_value_test = "  test('should output English text', () {\nLanguageLocalizations.setInstance(\nLanguageLocalizations(Locale('en', 'EN')),\n);\n";        
         for(const key in import_data)
         {
             ui_strings_value =ui_strings_value+ "  static String get " + import_data[key]['variable_name'] + " => LanguageLocalizations.getText('" + import_data[key]['variable_name'] + "');\n";
             en_value = en_value+`'${import_data[key]['variable_name']}':'${import_data[key]['en']}',\n`;
             th_value = th_value+`'${import_data[key]['variable_name']}':'${import_data[key]['thai']}',\n`;
+            th_localize_value_test = th_localize_value_test + "expect(LanguageLocalizations.getText('" + import_data[key]['variable_name'] + "'), '" + import_data[key]['thai'] + "',);\n";
+            en_localize_value_test = en_localize_value_test + "expect(LanguageLocalizations.getText('" + import_data[key]['variable_name'] + "'), '" + import_data[key]['en'] + "',);\n";
         }
         ui_strings = uiStringsHeader+uiStringsImport+uiStringsClassComments+uiStringsClass+missingString+ui_strings_value+"}\n"
         localize_value = localizeValueHeader +en_value+ "},\n"+th_value+ "},\n"+localizeValueEnd;
-
+        localize_value_test = localizeValueTestHeader+localizeValueTestMain+th_localize_value_test + "});\n" +en_localize_value_test + "});\n"+"}\n";
         console.log(ui_strings);
         downloadString(ui_strings, "text/dart", "ui_strings.dart");
-        downloadString(localize_value, "text/dart", "localized_values.dart")
-
+        downloadString(localize_value, "text/dart", "localized_values.dart");
+        downloadString(localize_value_test, "text/dart", "localized_value_test.dart");
     }
 
     // create file and download
